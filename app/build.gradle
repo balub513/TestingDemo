@@ -17,7 +17,8 @@ android {
         versionName "1.0"
         buildConfigField("String", "API_KEY_PIXBAY", API_KEY_PIXBAY)
 
-        testInstrumentationRunner "com.androiddevs.shoppinglisttestingyt.HiltTestRunner"
+        //testInstrumentationRunner "com.androiddevs.shoppinglisttestingyt.HiltTestRunner"
+        testInstrumentationRunner "com.HiltTestRunner"
     }
 
     buildTypes {
@@ -118,4 +119,9 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     androidTestImplementation "org.mockito:mockito-core:3.3.3"
+
+    // For instrumented tests.
+    androidTestImplementation 'com.google.dagger:hilt-android-testing:2.44'
+    // ...with Kotlin.
+    kaptAndroidTest 'com.google.dagger:hilt-android-compiler:2.44'
 }

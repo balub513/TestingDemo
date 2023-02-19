@@ -1,4 +1,4 @@
-package com.data.local
+package com.example.data.local
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
@@ -9,6 +9,8 @@ import com.example.testingdemo.data.local.ShoppingDataBase
 import com.example.testingdemo.data.local.ShoppingItem
 import com.getOrAwaitValue
 import com.google.common.truth.Truth.assertThat
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
@@ -17,23 +19,33 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import javax.inject.Inject
+import javax.inject.Named
 
 @ExperimentalCoroutinesApi
-@RunWith(AndroidJUnit4::class)
+//@RunWith(AndroidJUnit4::class)
+@HiltAndroidTest
 class ShoppingDaoTest {
 
+    @get:Rule
+    var hiltRule = HiltAndroidRule(this)
+
     private lateinit var dao: ShoppingDao
-    private lateinit var shoppingDataBase: ShoppingDataBase
+
+    @Inject
+    @Named("TestDB")
+    lateinit var shoppingDataBase: ShoppingDataBase
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Before
     fun setup() {
-        shoppingDataBase = Room.inMemoryDatabaseBuilder(
-            ApplicationProvider.getApplicationContext(),
-            ShoppingDataBase::class.java
-        ).allowMainThreadQueries().build()
+//        shoppingDataBase = Room.inMemoryDatabaseBuilder(
+//            ApplicationProvider.getApplicationContext(),
+//            ShoppingDataBase::class.java
+//        ).allowMainThreadQueries().build()
+        hiltRule.inject()
 
         dao = shoppingDataBase.shoppingDao()
     }
@@ -69,7 +81,7 @@ class ShoppingDaoTest {
     }
 
     @Test
-    fun testTotalItemsPrice(){
+    fun testTotalItemsPrice() {
         runBlocking {
             val item1 = ShoppingItem("Banana", 10, 5, "imageUrl", 1)
             val item2 = ShoppingItem("Apple", 10, 10, "imageUrl", 2)
@@ -78,7 +90,7 @@ class ShoppingDaoTest {
             dao.insertItem(item2)
             dao.insertItem(item3)
 
-            val itemsTotalPrice = dao.getItemsTotalPrice().getOrAwaitValue {  }
+            val itemsTotalPrice = dao.getItemsTotalPrice().getOrAwaitValue { }
             assertThat(itemsTotalPrice).isEqualTo(250)
         }
     }
